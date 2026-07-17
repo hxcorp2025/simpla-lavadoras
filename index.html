@@ -34,6 +34,7 @@
     --negativo:#D92D20;
   }
   *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
   html,body{margin:0;padding:0;width:100%;overflow-x:hidden;font-family:'Roboto',sans-serif;color:var(--texto)}
   a{color:var(--azul);text-decoration:none}
   a:hover{color:var(--azul-claro)}
@@ -215,6 +216,7 @@
   }
 
   @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
     .cta-btn,.marquee-track{animation:none}
     .faq__painel,.faq__mais,.cta-btn .arw{transition:none}
   }
@@ -568,16 +570,12 @@
     e.preventDefault();
     if (!form.checkValidity()){ form.reportValidity(); return; }
 
-    var nome  = (form.nome.value || "").trim();
-    var telv  = (form.telefone.value || "").trim();
-    var email = (form.email.value || "").trim();
-
     if (typeof window.fbq === "function") window.fbq("track", "Lead");
 
-    var msg = "Olá! Vim pela página e quero alugar uma lavadora de piso para a limpeza da minha obra.\n"
-            + "Nome: " + nome + "\n"
-            + "Telefone: " + telv + "\n"
-            + "E-mail: " + email;
+    /* Nome/e-mail/telefone são validados mas NÃO saem daqui: a mensagem é fixa e não
+       há persistência. Quem for ligar o POST pro n8n/Supabase lê os campos do `form`
+       aqui, antes do window.open. Ver README, "Captura de lead". */
+    var msg = "Olá, quero saber mais sobre as lavadoras de piso!";
 
     window.open("https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(msg), "_blank");
   });

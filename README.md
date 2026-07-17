@@ -24,6 +24,12 @@ Página única, estática, sem build e sem dependência de runtime. Abre direto 
 Hoje o funil é: preenche → abre WhatsApp → **torce** pra pessoa apertar enviar.
 Não existe registro do lead nem medição da perda entre "preencheu" e "mandou a mensagem".
 
+⚠️ **Desde que a mensagem virou fixa** ("Olá, quero saber mais sobre as lavadoras de piso!"),
+nome/e-mail/telefone **não saem mais da página**: são validados e descartados. Antes ao menos
+viajavam dentro do texto do WhatsApp. Ou seja, os 3 campos hoje são atrito puro — custam
+conversão e não entregam nada. Só faz sentido mantê-los junto com a persistência abaixo;
+sem ela, o form poderia ser só um botão pro WhatsApp.
+
 Se quiser fechar esse furo, o caminho é um POST pro n8n/Supabase antes do `window.open`
 (gravar nome/email/telefone + UTMs) e disparar o CAPI server-side em paralelo ao pixel.
 Não foi implementado porque não foi pedido.
