@@ -31,6 +31,7 @@
     --brilho:#36B5FB;
     --suave:#dceaf5;
     --texto:#272727;
+    --negativo:#D92D20;
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;width:100%;overflow-x:hidden;font-family:'Roboto',sans-serif;color:var(--texto)}
@@ -73,7 +74,9 @@
 
   /* ---------- LOGOS ---------- */
   .logos{background:var(--escuro);padding:30px 0 34px}
-  .logos__titulo{margin:0 0 22px;text-align:center;font-family:'Poppins',sans-serif;font-weight:500;font-size:14px;letter-spacing:1px;text-transform:uppercase;color:#8fb6d6}
+  /* a faixa é full-bleed (padding lateral 0) pro marquee sangrar; o respiro lateral
+     mora aqui no título, senão ele encosta na borda no mobile */
+  .logos__titulo{margin:0 auto 22px;max-width:620px;padding:0 24px;text-align:center;text-wrap:balance;font-family:'Poppins',sans-serif;font-weight:500;font-size:14px;letter-spacing:1px;text-transform:uppercase;color:#8fb6d6}
   .marquee-wrap{width:100%;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
   .logos__item{flex:none;width:170px;height:74px;margin:0 22px;display:flex;align-items:center;justify-content:center}
   .logos__item img{max-width:100%;max-height:46px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:.9}
@@ -87,7 +90,7 @@
   .dores__intro{margin:16px 0 0;font-size:18px;line-height:1.55;color:#4a4a4a}
   .comparativo{margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:20px}
   .card-hoje{background:#f4f5f6;border:1px solid #e4e6e8;border-radius:14px;padding:34px 32px}
-  .card-hoje h3{margin:0 0 20px;font-size:20px;color:#6b6b6b}
+  .card-hoje h3{margin:0 0 20px;font-size:20px;color:var(--negativo)}
   .card-simpla{background:linear-gradient(150deg,#004B7F,#003865);border-radius:14px;padding:34px 32px;box-shadow:0 16px 40px rgba(0,56,101,.28)}
   .card-simpla h3{margin:0 0 20px;font-size:20px;color:#fff}
   .lista{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:16px}
@@ -122,14 +125,13 @@
   .passo p{margin:0;font-size:15px;line-height:1.55;color:#5a5a5a}
 
   /* ---------- FORMULÁRIO ---------- */
-  .form-sec{background:linear-gradient(135deg,#003865,#004B7F);padding:76px 24px}
+  /* alvo dos CTAs: a seção inteira, pra abrir na headline e não no meio do form */
+  .form-sec{background:linear-gradient(135deg,#003865,#004B7F);padding:76px 24px;scroll-margin-top:20px}
   .form-card{max-width:1080px;margin:0 auto;background:rgba(0,0,0,.42);border:1px solid var(--azul-claro);border-radius:18px;padding:46px;display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
   .form-card h2{margin:12px 0 16px;font-size:clamp(26px,3vw,36px);line-height:1.12;color:#fff}
   .form-card .eyebrow{color:var(--brilho)}
   .form-card__texto{margin:0;font-size:17px;line-height:1.55;color:#cfe0ee}
-  .form-card__pontos{list-style:none;margin:24px 0 0;padding:0;display:flex;flex-direction:column;gap:12px}
-  .form-card__pontos li{display:flex;align-items:center;gap:10px;font-size:15px;color:#eaf3fa}
-  .form-box{scroll-margin-top:90px;background:#fff;border-radius:14px;padding:32px}
+  .form-box{background:#fff;border-radius:14px;padding:32px}
   .form-box form{display:flex;flex-direction:column;gap:14px}
   .form-box label{font-family:'Poppins',sans-serif;font-weight:600;font-size:13px;color:var(--escuro)}
   .form-box input{margin-top:6px;width:100%;padding:15px 16px;border:1px solid #d5dde4;border-radius:8px;font-family:'Roboto',sans-serif;font-size:15px;color:#2A2A2A;background:#fff}
@@ -188,10 +190,21 @@
     .como{padding:48px 20px}
     .passos{margin-top:30px;grid-template-columns:1fr;gap:16px}
 
-    .form-sec{padding:48px 20px}
-    .form-card{max-width:560px;padding:26px;grid-template-columns:1fr;gap:28px;align-items:stretch;border-radius:16px}
-    /* seção 20 + card 26 + box 32 = 78px de padding por lado; a 320px sobrava nada */
-    .form-box{padding:24px 20px}
+    /* Mobile é ~95% do tráfego. O CTA abre nesta seção, então ela tem que caber numa
+       tela só: da headline até o botão. Os valores abaixo são apertados pra fechar
+       em 693px de viewport (Android 360x780, o mais estreito que importa). Medido em
+       Chrome headless — mexer aqui pede nova medição, não olhômetro. */
+    .form-sec{padding:10px 16px 24px}
+    .form-card{max-width:560px;padding:16px;grid-template-columns:1fr;gap:12px;align-items:stretch;border-radius:16px}
+    .form-card h2{margin:2px 0 6px;font-size:23px}
+    .form-card__texto{font-size:15px;line-height:1.45}
+    /* seção 16 + card 16 + box 16 = 48px de padding por lado; a 320px ainda respira */
+    .form-box{padding:16px}
+    .form-box form{gap:9px}
+    .form-box label{font-size:12.5px}
+    .form-box input{margin-top:4px;padding:13px 14px}
+    .form-box .cta-btn{margin-top:4px}
+    .form-box__aviso{font-size:12px}
 
     .stats{padding:40px 20px}
     .stats__card{padding:28px 20px;grid-template-columns:repeat(2,1fr);gap:22px}
@@ -231,7 +244,7 @@
           <span><b style="font-weight:700">+20 modelos</b> de lavadoras de piso</span>
         </li>
       </ul>
-      <a href="#form" class="cta-btn">Falar com um especialista agora<span class="arw">&rarr;</span></a>
+      <a href="#contato" class="cta-btn">Falar com um especialista agora<span class="arw">&rarr;</span></a>
     </div>
   </div>
 </section>
@@ -275,10 +288,10 @@
       <div class="card-hoje">
         <h3>Como é hoje</h3>
         <ul class="lista">
-          <li><svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#d5d7d9"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7" stroke="#6b6b6b" stroke-width="2" stroke-linecap="round"/></svg><span>Rodo e vassoura não tiram a nata nem o pó fino de cimento.</span></li>
-          <li><svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#d5d7d9"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7" stroke="#6b6b6b" stroke-width="2" stroke-linecap="round"/></svg><span>São dias de trabalho e o resultado nunca fica à altura da entrega.</span></li>
-          <li><svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#d5d7d9"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7" stroke="#6b6b6b" stroke-width="2" stroke-linecap="round"/></svg><span>Máquina velha ou errada trava no meio do serviço e atrasa a entrega.</span></li>
-          <li><svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#d5d7d9"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7" stroke="#6b6b6b" stroke-width="2" stroke-linecap="round"/></svg><span>O prazo continua correndo enquanto o piso segue sujo.</span></li>
+          <li><svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#D92D20"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg><span>Rodo e vassoura não tiram a nata nem o pó fino de cimento.</span></li>
+          <li><svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#D92D20"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg><span>São dias de trabalho e o resultado nunca fica à altura da entrega.</span></li>
+          <li><svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#D92D20"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg><span>Máquina velha ou errada trava no meio do serviço e atrasa a entrega.</span></li>
+          <li><svg class="ico" width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#D92D20"/><path d="M8.5 8.5l7 7M15.5 8.5l-7 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg><span>O prazo continua correndo enquanto o piso segue sujo.</span></li>
         </ul>
       </div>
       <div class="card-simpla">
@@ -292,7 +305,7 @@
       </div>
     </div>
     <div class="centro">
-      <a href="#form" class="cta-btn">Falar com um especialista agora<span class="arw">&rarr;</span></a>
+      <a href="#contato" class="cta-btn">Falar com um especialista agora<span class="arw">&rarr;</span></a>
     </div>
   </div>
 </section>
@@ -334,7 +347,7 @@
         </div>
       </div>
     </div>
-    <a href="#form" class="cta-btn">Falar com um especialista agora<span class="arw">&rarr;</span></a>
+    <a href="#contato" class="cta-btn">Falar com um especialista agora<span class="arw">&rarr;</span></a>
   </div>
 </section>
 
@@ -364,17 +377,12 @@
 </section>
 
 <!-- ============ FORMULÁRIO ============ -->
-<section class="form-sec">
+<section class="form-sec" id="contato">
   <div class="form-card">
     <div>
       <span class="eyebrow">Resposta rápida</span>
       <h2>Sua obra tem prazo. A gente também trabalha no ritmo dela.</h2>
       <p class="form-card__texto">Fale com um de nossos representantes e descubra hoje mesmo a máquina ideal para sua necessidade.</p>
-      <ul class="form-card__pontos">
-        <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="flex:none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#36B5FB"/><path d="M7 12.5l3 3 7-7.5" stroke="#00263f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Atendimento direto no WhatsApp, sem espera.</span></li>
-        <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="flex:none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#36B5FB"/><path d="M7 12.5l3 3 7-7.5" stroke="#00263f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>A máquina certa pro tamanho e o piso da sua obra.</span></li>
-        <li><svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="flex:none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#36B5FB"/><path d="M7 12.5l3 3 7-7.5" stroke="#00263f" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Assistência e troca em até 48h.</span></li>
-      </ul>
     </div>
     <div id="form" class="form-box">
       <form id="lead-form" novalidate>
@@ -457,7 +465,7 @@
 
     </div>
     <div class="centro">
-      <a href="#form" class="cta-btn">Falar com um especialista agora<span class="arw">&rarr;</span></a>
+      <a href="#contato" class="cta-btn">Falar com um especialista agora<span class="arw">&rarr;</span></a>
     </div>
   </div>
 </section>
@@ -475,7 +483,7 @@
   /* ============================================================
      >>> TROCAR pelo número real de WhatsApp (55 + DDD + número) <<<
      ============================================================ */
-  var WHATSAPP = "5551999999999";
+  var WHATSAPP = "5551985175287";
 
   /* ---------- FAQ ---------- */
   var itens = Array.prototype.slice.call(document.querySelectorAll(".faq__item"));

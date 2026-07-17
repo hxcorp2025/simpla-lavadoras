@@ -13,10 +13,11 @@ Página única, estática, sem build e sem dependência de runtime. Abre direto 
 
 | # | Item | Onde |
 |---|---|---|
-| 1 | **Número de WhatsApp é placeholder** (`5551999999999`). Sem trocar, todo lead vai pro vazio. | `index.html`, const `WHATSAPP` no `<script>` |
-| 2 | **Pixel da Meta não está instalado.** O código dispara `fbq('track','Lead')` só se o pixel existir; hoje não existe, então nenhum Lead é registrado. | `index.html`, colar o snippet do pixel no `<head>` |
-| 3 | **Lead não é persistido em lugar nenhum.** O form só monta a mensagem e abre o `wa.me`. Se a pessoa não apertar enviar no WhatsApp, o lead evapora — e não há como medir isso. | ver "Captura de lead" abaixo |
-| 4 | **Rótulo do CTA quebra em 2 linhas dentro do form no mobile.** | ver "CTA no mobile" abaixo |
+| 1 | **Pixel da Meta não está instalado.** O código dispara `fbq('track','Lead')` só se o pixel existir; hoje não existe, então nenhum Lead é registrado. | `index.html`, colar o snippet do pixel no `<head>` |
+| 2 | **Lead não é persistido em lugar nenhum.** O form só monta a mensagem e abre o `wa.me`. Se a pessoa não apertar enviar no WhatsApp, o lead evapora — e não há como medir isso. | ver "Captura de lead" abaixo |
+| 3 | **Rótulo do CTA quebra em 2 linhas dentro do form no mobile.** | ver "CTA no mobile" abaixo |
+
+✅ Resolvido: número de WhatsApp real (`5551985175287`) em `index.html`, const `WHATSAPP`.
 
 ### Captura de lead
 
@@ -30,12 +31,35 @@ Não foi implementado porque não foi pedido.
 ### CTA no mobile
 
 O rótulo "Falar com um especialista agora" tem 30 caracteres. Os CTAs de seção cabem em
-uma linha de 360px pra cima (full-width, 15px). O botão **dentro do form** tem só ~258px
-úteis (paddings aninhados: seção 20 + card 26 + box 20) e quebra em 2 linhas equilibradas
+uma linha de 360px pra cima (full-width, 15px). O botão **dentro do form** tem só ~264px
+úteis (paddings aninhados: seção 16 + card 16 + box 16) e quebra em 2 linhas equilibradas
 — visualmente aceitável, mas é limite de copy, não de CSS.
 
 Um rótulo de ~22 caracteres ("Falar com especialista", "Quero minha máquina") cabe em
 uma linha em qualquer largura. Decisão de copy, não mexi.
+
+### Enquadramento do form no mobile (restrição viva)
+
+~95% do tráfego é mobile e todos os CTAs abrem em `#contato` (a **seção**, não o `#form`,
+senão o scroll pula a headline). A seção precisa caber numa tela só, da headline ao botão.
+Os paddings do bloco `@media (max-width:768px)` são apertados justamente pra isso e foram
+medidos, não estimados. Estado atual (base do botão vs. viewport útil):
+
+| Aparelho | Viewport | Botão | |
+|---|---|---|---|
+| Android 360×640 | 640 | ~560 | ✅ com aviso |
+| iPhone 14 390×713 | 713 | ~560 | ✅ com aviso |
+| iPhone Pro Max 430×800 | 800 | ~540 | ✅ com aviso |
+| iPhone SE 375×553 | 553 | ~560 | ⚠️ ~8px abaixo da dobra (some quando a barra do Safari recolhe no scroll) |
+| 320×568 | 568 | ~630 | ❌ não cabe (aparelho pré-2016) |
+
+Pra fechar o SE e o 320 sem apertar mais o layout, o caminho é encurtar a headline ou a
+subheadline — decisão de copy.
+
+> ⚠️ **Ao remedir:** `--window-size` no Chrome headless do macOS **não** aplica a largura —
+> ele trava o `innerWidth` em **500px** (mínimo de janela do SO) e só a altura responde.
+> Medir assim dá falso positivo. Use um `<iframe>` com a largura do aparelho
+> (+ `--allow-file-access-from-files`), que é o que as media queries realmente enxergam.
 
 ---
 
