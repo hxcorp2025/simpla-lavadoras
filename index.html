@@ -23,6 +23,20 @@
 
 <script>document.documentElement.className += " js";</script>
 
+<!-- Meta Pixel -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '708983840560085');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" alt=""
+src="https://www.facebook.com/tr?id=708983840560085&ev=PageView&noscript=1"></noscript>
+<!-- End Meta Pixel -->
+
 <style>
   :root{
     --escuro:#00263f;
@@ -397,6 +411,12 @@
         <label>Telefone / WhatsApp
           <input name="telefone" type="tel" placeholder="(51) 99999-9999" autocomplete="tel" inputmode="numeric" required>
         </label>
+        <!-- honeypot: humano não vê nem preenche; bot preenche e o n8n descarta -->
+        <div style="position:absolute;left:-9999px;top:-9999px;height:0;overflow:hidden" aria-hidden="true">
+          <label>Não preencha este campo
+            <input name="website" type="text" tabindex="-1" autocomplete="off">
+          </label>
+        </div>
         <button type="submit" class="cta-btn">Falar com um especialista agora<span class="arw">&rarr;</span></button>
         <p class="form-box__aviso">Ao enviar, você é levado direto ao WhatsApp do nosso especialista.</p>
       </form>
@@ -554,6 +574,59 @@
     obs.observe(alvoStats);
   }
 
+  /* ---------- TRACKING ---------- */
+  var WEBHOOK = "https://n8n-n8n.sf6dqo.easypanel.host/webhook/simpla-lp-lead";
+  var PARAMS = ["utm_source","utm_medium","utm_campaign","utm_term","utm_content","utm_id","fbclid","gclid","ttclid"];
+  var carregadaEm = Date.now();
+
+  function lerCookie(nome){
+    var m = document.cookie.match(new RegExp("(?:^|; )" + nome + "=([^;]*)"));
+    return m ? decodeURIComponent(m[1]) : "";
+  }
+
+  // guarda utm_*/click ids do primeiro acesso: sobrevivem a reload e volta do WhatsApp
+  var query = new URLSearchParams(location.search);
+  var guardadas = {};
+  try { guardadas = JSON.parse(localStorage.getItem("simpla_track") || "{}"); } catch(e){}
+  var temNaUrl = PARAMS.some(function(p){ return query.get(p); });
+  if (temNaUrl){
+    guardadas = {};
+    PARAMS.forEach(function(p){ var v = query.get(p); if (v) guardadas[p] = v; });
+    guardadas._ts = Date.now();
+    try { localStorage.setItem("simpla_track", JSON.stringify(guardadas)); } catch(e){}
+  }
+  function track(p){ return query.get(p) || guardadas[p] || ""; }
+
+  function dadosDeTracking(){
+    var fbp = lerCookie("_fbp");
+    var fbc = lerCookie("_fbc");
+    var fbclid = track("fbclid");
+    // sem cookie _fbc mas com fbclid na URL: monta o fbc no formato oficial
+    if (!fbc && fbclid) fbc = "fb.1." + Date.now() + "." + fbclid;
+    return {
+      utm_source: track("utm_source"), utm_medium: track("utm_medium"),
+      utm_campaign: track("utm_campaign"), utm_term: track("utm_term"),
+      utm_content: track("utm_content"), utm_id: track("utm_id"),
+      fbclid: fbclid, gclid: track("gclid"), ttclid: track("ttclid"),
+      fbp: fbp, fbc: fbc,
+      pagina_origem: location.href,
+      url_path: location.pathname,
+      referrer: document.referrer || "",
+      resolucao: screen.width + "x" + screen.height,
+      viewport: window.innerWidth + "x" + window.innerHeight,
+      idioma: navigator.language || "",
+      timezone: (Intl.DateTimeFormat().resolvedOptions().timeZone) || "",
+      device_type: /Mobi|Android/i.test(navigator.userAgent) ? "mobile" : "desktop",
+      touch: ("ontouchstart" in window) ? "sim" : "nao",
+      plataforma: navigator.platform || "",
+      dpr: String(window.devicePixelRatio || 1),
+      cores_tela: String(screen.colorDepth || ""),
+      user_agent: navigator.userAgent,
+      timestamp: new Date().toISOString(),
+      origem: "lp-pos-obra"
+    };
+  }
+
   /* ---------- FORMULÁRIO ---------- */
   var form = document.getElementById("lead-form");
   var tel = form.querySelector('input[name="telefone"]');
@@ -570,11 +643,29 @@
     e.preventDefault();
     if (!form.checkValidity()){ form.reportValidity(); return; }
 
-    if (typeof window.fbq === "function") window.fbq("track", "Lead");
+    // mesmo event_id no pixel e no CAPI: a Meta deduplica browser x server
+    var eventId = "lead_" + Date.now() + "_" + Math.random().toString(36).slice(2, 10);
 
-    /* Nome/e-mail/telefone são validados mas NÃO saem daqui: a mensagem é fixa e não
-       há persistência. Quem for ligar o POST pro n8n/Supabase lê os campos do `form`
-       aqui, antes do window.open. Ver README, "Captura de lead". */
+    if (typeof window.fbq === "function") window.fbq("track", "Lead", {}, { eventID: eventId });
+
+    var payload = dadosDeTracking();
+    payload.event_id = eventId;
+    payload.nome = form.nome.value.trim();
+    payload.email = form.email.value.trim();
+    payload.telefone = form.telefone.value;
+    payload.website = form.website.value;                       // honeypot
+    payload.segundos_na_pagina = Math.round((Date.now() - carregadaEm) / 1000);
+
+    // fire-and-forget ANTES do wa.me: keepalive segura o POST mesmo com a aba indo embora
+    try {
+      fetch(WEBHOOK, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        keepalive: true
+      }).catch(function(){});
+    } catch(err){}
+
     var msg = "Olá, quero saber mais sobre as lavadoras de piso!";
 
     window.open("https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(msg), "_blank");
