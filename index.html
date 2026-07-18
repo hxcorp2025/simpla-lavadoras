@@ -85,6 +85,9 @@ src="https://www.facebook.com/tr?id=708983840560085&ev=PageView&noscript=1"></no
   .hero__lista li{display:flex;align-items:flex-start;gap:12px;font-size:16px;line-height:1.4;color:#eaf3fa}
   .hero__lista span{font-family:'Poppins',sans-serif;font-weight:500;color:#fff}
   .hero .cta-btn{margin-top:8px;align-self:flex-start}
+  /* bloco de imagem do hero: só existe no mobile. No desktop fica escondido e o
+     hero segue com a imagem de background de sempre (desktop intocado). */
+  .hero__imagem{display:none}
   .ico{flex:none;margin-top:1px}
 
   /* ---------- LOGOS ---------- */
@@ -188,10 +191,23 @@ src="https://www.facebook.com/tr?id=708983840560085&ev=PageView&noscript=1"></no
        equilibradas — é comprimento de copy, não CSS. Ver README. */
     .cta-btn{width:100%;padding:16px;font-size:15px;letter-spacing:.2px;text-wrap:balance}
 
-    .hero{background-position:72% center}
-    .hero__veu{background:linear-gradient(180deg,rgba(4,32,55,.9) 0%,rgba(6,46,79,.84) 55%,rgba(6,46,79,.72) 100%)}
-    .hero__inner{padding:44px 20px 48px;min-height:0}
-    .hero__conteudo{max-width:100%;gap:18px}
+    /* MOBILE: hero reestruturado. Sai a imagem de background + véu, entra um bloco
+       de imagem inline (.hero__imagem). Ordem empilhada: logo centralizado (metade
+       do tamanho) > headline > sub > imagem > 3 benefícios > botão. Desktop mantém
+       o hero de background — mobile e desktop DIFERENTES de propósito. */
+    .hero{background-image:none;background:linear-gradient(165deg,#0a3a63 0%,#062e4f 100%)}
+    .hero__veu{display:none}
+    .hero__inner{padding:30px 20px 42px;min-height:0}
+    .hero__conteudo{max-width:100%;gap:16px}
+    .hero__logo{height:31px;width:auto;align-self:center;object-position:center center}
+    /* headline e sub centralizadas no mobile (a lista de benefícios segue à esquerda,
+       onde o checkmark lê melhor) */
+    .hero h1{font-size:31px;text-align:center}
+    .hero__sub{font-size:16px;text-align:center;margin-left:auto;margin-right:auto}
+    /* o bloco assume a proporção NATURAL da imagem (sem aspect-ratio fixo, sem
+       object-fit): a imagem entra inteira, sem corte, e o bloco se ajusta a ela */
+    .hero__imagem{display:block;width:100%;margin:2px 0;border-radius:14px;overflow:hidden;box-shadow:0 14px 32px rgba(0,0,0,.4)}
+    .hero__imagem img{width:100%;height:auto;display:block}
     .hero .cta-btn{align-self:stretch;text-align:center}
 
     .logos{padding:26px 0 30px}
@@ -246,6 +262,11 @@ src="https://www.facebook.com/tr?id=708983840560085&ev=PageView&noscript=1"></no
       <img class="hero__logo" src="assets/simpla-logo.webp" alt="Simpla Lavadoras" width="280" height="62" fetchpriority="high">
       <h1>Máquinas para limpeza pesada com alta eficiência</h1>
       <p class="hero__sub">Aluguel de lavadora de piso para limpeza bruta durante e pós-obra na <b>Grande Porto Alegre e Serra Gaúcha.</b></p>
+      <div class="hero__imagem">
+        <!-- bloco só aparece no mobile (display:none no desktop). Segue a proporção
+             da imagem (CSS height:auto); ajustar width/height ao trocar a imagem. -->
+        <img src="assets/hero-antea-obra.webp" alt="Lavadora Simpla Antea 50 limpando piso de obra, deixando rastro limpo" width="1200" height="900">
+      </div>
       <ul class="hero__lista">
         <li>
           <svg class="ico" width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#36B5FB"/><path d="M7 12.5l3 3 7-7.5" stroke="#00263f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
