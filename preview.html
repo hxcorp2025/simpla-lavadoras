@@ -188,8 +188,10 @@
     .hero__logo{height:31px;width:auto;align-self:center;object-position:center center}
     .hero h1{font-size:31px}
     .hero__sub{font-size:16px}
-    .hero__imagem{display:block;width:100%;margin:2px 0;border-radius:14px;overflow:hidden;aspect-ratio:4/3;box-shadow:0 14px 32px rgba(0,0,0,.4)}
-    .hero__imagem img{width:100%;height:100%;object-fit:cover;display:block}
+    /* o bloco assume a proporção NATURAL da imagem (sem aspect-ratio fixo, sem
+       object-fit): a imagem entra inteira, sem corte, e o bloco se ajusta a ela */
+    .hero__imagem{display:block;width:100%;margin:2px 0;border-radius:14px;overflow:hidden;box-shadow:0 14px 32px rgba(0,0,0,.4)}
+    .hero__imagem img{width:100%;height:auto;display:block}
     .hero .cta-btn{align-self:stretch;text-align:center}
 
     .logos{padding:26px 0 30px}
@@ -245,6 +247,9 @@
       <h1>Máquinas para limpeza pesada com alta eficiência</h1>
       <p class="hero__sub">Aluguel de lavadora de piso para limpeza bruta durante e pós-obra na <b>Grande Porto Alegre e Serra Gaúcha.</b></p>
       <div class="hero__imagem">
+        <!-- bloco segue a proporção da imagem (CSS height:auto). Ao trocar a imagem,
+             ajustar width/height abaixo pras dimensões reais dela, pra reservar o
+             espaço certo e não dar "pulo" no carregamento (CLS). -->
         <img src="assets/hero-antea-temp.webp" alt="Lavadora Simpla Antea 50 em ação" width="1000" height="750">
       </div>
       <ul class="hero__lista">
