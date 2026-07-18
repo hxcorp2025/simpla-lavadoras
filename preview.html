@@ -186,8 +186,10 @@
     .hero__inner{padding:30px 20px 42px;min-height:0}
     .hero__conteudo{max-width:100%;gap:16px}
     .hero__logo{height:31px;width:auto;align-self:center;object-position:center center}
-    .hero h1{font-size:31px}
-    .hero__sub{font-size:16px}
+    /* headline e sub centralizadas no mobile (a lista de benefícios segue à esquerda,
+       onde o checkmark lê melhor) */
+    .hero h1{font-size:31px;text-align:center}
+    .hero__sub{font-size:16px;text-align:center;margin-left:auto;margin-right:auto}
     /* o bloco assume a proporção NATURAL da imagem (sem aspect-ratio fixo, sem
        object-fit): a imagem entra inteira, sem corte, e o bloco se ajusta a ela */
     .hero__imagem{display:block;width:100%;margin:2px 0;border-radius:14px;overflow:hidden;box-shadow:0 14px 32px rgba(0,0,0,.4)}
@@ -250,7 +252,7 @@
         <!-- bloco segue a proporção da imagem (CSS height:auto). Ao trocar a imagem,
              ajustar width/height abaixo pras dimensões reais dela, pra reservar o
              espaço certo e não dar "pulo" no carregamento (CLS). -->
-        <img src="assets/hero-antea-temp.webp" alt="Lavadora Simpla Antea 50 em ação" width="1000" height="750">
+        <img src="assets/hero-antea-obra.webp" alt="Lavadora Simpla Antea 50 limpando piso de obra, deixando rastro limpo" width="1200" height="900">
       </div>
       <ul class="hero__lista">
         <li>
